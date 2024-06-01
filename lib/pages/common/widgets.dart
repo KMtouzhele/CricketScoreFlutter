@@ -28,3 +28,35 @@ TextField commonTextFieldDark(String hint, TextEditingController controller) {
     ),
   );
 }
+
+ButtonStyle primaryButtonStyle = ButtonStyle(
+  backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Disabled color
+      }
+      return Colors.black; // Regular color
+    },
+  ),
+  foregroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.black; // Disabled color
+      }
+      return Colors.lightGreenAccent; // Regular color
+    },
+  ),
+  overlayColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+      if (states.contains(WidgetState.pressed)) {
+        return Colors.grey; // Overlay color when button is pressed
+      }
+      return Colors.transparent;
+    },
+  ),
+  shadowColor: WidgetStateProperty.all<Color>(Colors.lightGreenAccent),
+  textStyle: WidgetStateProperty.all<TextStyle>(const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  )),
+);

@@ -14,13 +14,3 @@ const SizedBox marginSpaceMedium = SizedBox(height: 16.0);
 
 const SizedBox marginSpaceLarge = SizedBox(height: 32.0);
 
-ButtonStyle primaryButtonStyle = const ButtonStyle(
- backgroundColor: WidgetStatePropertyAll<Color>(Colors.black),
- foregroundColor: WidgetStatePropertyAll<Color>(Colors.lightGreenAccent),
- shadowColor: WidgetStatePropertyAll<Color>(Colors.lightGreenAccent),
- textStyle: WidgetStatePropertyAll<TextStyle>(TextStyle(
-  fontSize: 18,
-  fontWeight: FontWeight.bold,
- )),
-);
-

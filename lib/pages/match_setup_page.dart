@@ -29,6 +29,23 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
   }
 
   Future<void> _startMatch() async {
+    if (!isInputEmpty()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill all the fields"),
+        ),
+      );
+      return;
+    }
+
+    if (isInputRepeated()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter unique names"),
+        ),
+      );
+      return;
+    }
     String battingTeamName = _battingTeamController.text;
     String bowlingTeamName = _bowlingTeamController.text;
     Map<String, int> battersMap = {};
@@ -45,6 +62,42 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
          battingTeamName, bowlingTeamName, battersMap, bowlersMap
      );
     print(matchInfo);
+  }
+
+  bool isInputEmpty() {
+    if (_battingTeamController.text.isEmpty) {
+      return false;
+    }
+    if (_bowlingTeamController.text.isEmpty) {
+      return false;
+    }
+    for (var i = 0; i < 5; i++) {
+      if (_batterControllers[i].text.isEmpty) {
+        return false;
+      }
+      if (_bowlerControllers[i].text.isEmpty) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool isInputRepeated() {
+    List<String> allNames = [];
+    allNames.add(_battingTeamController.text);
+    allNames.add(_bowlingTeamController.text);
+    for (var i = 0; i < 5; i++) {
+      allNames.add(_batterControllers[i].text);
+      allNames.add(_bowlerControllers[i].text);
+    }
+    for (var i = 0; i < allNames.length; i++) {
+      for (var j = i + 1; j < allNames.length; j++) {
+        if (allNames[i] == allNames[j]) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @override
