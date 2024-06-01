@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-TextField playerTextField(String hint) {
+TextField commonTextField(String hint, TextEditingController controller) {
   return TextField(
+    controller: controller,
     decoration: InputDecoration(
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -11,8 +12,9 @@ TextField playerTextField(String hint) {
   );
 }
 
-TextField playerTextFieldDark(String hint) {
+TextField commonTextFieldDark(String hint, TextEditingController controller) {
   return TextField(
+    controller: controller,
     decoration: InputDecoration(
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -20,6 +22,9 @@ TextField playerTextFieldDark(String hint) {
       ),
       labelText: hint,
       labelStyle: const TextStyle(color: Colors.white70),
+    ),
+    style: const TextStyle(
+      color: Colors.lightGreenAccent,
     ),
   );
 }
