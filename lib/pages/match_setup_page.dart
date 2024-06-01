@@ -1,260 +1,183 @@
 import 'package:flutter/material.dart';
-import '../../../core/resources/constants.dart';
-import '../../../core/resources/widgets.dart';
+import '../data/datasource/match_setup_data.dart';
+import '../domain/entities/player.dart';
+import '../domain/repositories/match_repository.dart';
+import '../domain/usecases/user_create_match.dart';
+import 'common/constants.dart';
+import 'common/widgets.dart';
 
-class MatchSetupPage extends StatelessWidget {
+class MatchSetupPage extends StatefulWidget {
   const MatchSetupPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Match Setup",
-          style: titleStyle,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 4.0, top: 32.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.lightGreenAccent[100],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Batting Team",
-                          style: subtitleStyle,
-                        ),
-                        marginSpaceSmall,
-                        const TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Team Name",
-                          ),
-                        ),
-                        marginSpaceLarge,
-                        const Text(
-                          "Batters",
-                          style: subtitleStyle,
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Expanded(
-                                child: playerTextField("Batter1")
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Expanded(
-                                child: playerTextField("Batter2")
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Expanded(
-                                child: playerTextField("Batter3")
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Expanded(
-                                child: playerTextField("Batter4")
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Expanded(
-                                child: playerTextField("Batter5")
-                            ),
-                          ],
-                        ),
-                        marginSpaceMedium,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 4.0, right: 16.0, top: 32.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Bowling Team",
-                          style: subtitleStyleDark,
+  State<MatchSetupPage> createState() => _MatchSetupPageState();
+}
 
-                        ),
-                        marginSpaceSmall,
-                        const TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Team Name",
-                          ),
-                        ),
-                        marginSpaceLarge,
-                        const Text(
-                          "Bowlers",
-                          style: subtitleStyleDark,
-                        ),
-                        marginSpaceSmall,
-                        Row(
+class _MatchSetupPageState extends State<MatchSetupPage> {
+  final TextEditingController _battingTeamController = TextEditingController();
+  final TextEditingController _bowlingTeamController = TextEditingController();
+  final List<TextEditingController> _batterControllers = List.generate(5, (index) => TextEditingController());
+  final List<TextEditingController> _bowlerControllers = List.generate(5, (index) => TextEditingController());
+
+  final MatchRepository _matchRepository = MatchSetupData();
+  late final UserCreateMatch _userCreateMatch;
+
+  @override
+  void initState(){
+    super.initState();
+    _userCreateMatch = UserCreateMatch(_matchRepository);
+  }
+
+  Future<void> _startMatch() async {
+    String battingTeamName = _battingTeamController.text;
+    String bowlingTeamName = _bowlingTeamController.text;
+    Map<String, int> battersMap = {};
+    Map<String, int> bowlersMap = {};
+    for (var i = 0; i < 5; i++) {
+      if (_batterControllers[i].text.isNotEmpty) {
+        battersMap[_batterControllers[i].text] = i + 1;
+      }
+      if (_bowlerControllers[i].text.isNotEmpty) {
+        bowlersMap[_bowlerControllers[i].text] = i + 1;
+      }
+    }
+     Map<String, String> matchInfo = await _userCreateMatch.createMatch(
+         battingTeamName, bowlingTeamName, battersMap, bowlersMap
+     );
+    print(matchInfo);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return buildScaffold();
+  }
+
+  Scaffold buildScaffold() {
+    return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        "Match Setup",
+        style: titleStyle,
+      ),
+    ),
+    body: SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 4.0, top: 32.0),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreenAccent[100],
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Batting Team",
+                        style: subtitleStyle,
+                      ),
+                      marginSpaceSmall,
+                      commonTextField("Team Name", _battingTeamController),
+                      marginSpaceLarge,
+                      const Text(
+                        "Batters",
+                        style: subtitleStyle,
+                      ),
+                      marginSpaceSmall,
+                      ...List.generate(5, (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
                           children: [
                             IconButton(
+                              onPressed: (){},
                               icon: const Icon(
                                 Icons.photo,
-                                color: Colors.lightGreenAccent,
+                                color: Colors.black,
                               ),
-                              onPressed: () {},
                             ),
                             Expanded(
-                              child:
-                              playerTextFieldDark("Bowler1"),
+                              child: commonTextField(
+                                  "Batter${index + 1}",
+                                  _batterControllers[index]
+                              ),
                             ),
                           ],
                         ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.lightGreenAccent,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Expanded(
-                              child:
-                              playerTextFieldDark("Bowler2"),
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.lightGreenAccent,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Expanded(
-                              child:
-                              playerTextFieldDark("Bowler3"),
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.lightGreenAccent,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Expanded(
-                              child:
-                              playerTextFieldDark("Bowler4"),
-                            ),
-                          ],
-                        ),
-                        marginSpaceSmall,
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.photo,
-                                color: Colors.lightGreenAccent,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Expanded(
-                              child:
-                              playerTextFieldDark("Bowler5"),
-                            ),
-                          ],
-                        ),
-                        marginSpaceMedium,
-                      ],
-                    ),
+                      )),
+                      marginSpaceMedium,
+                    ],
                   ),
                 ),
               ),
-            ],
             ),
-            Container(
-              padding: const EdgeInsets.all(borderPadding),
-              width: double.infinity,
-              child: ElevatedButton(
-                  onPressed: (){},
-                  style: primaryButtonStyle,
-                  child:
-                  const Text("Start Match"),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4.0, right: 16.0, top: 32.0),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Bowling Team",
+                        style: subtitleStyleDark,
+
+                      ),
+                      marginSpaceSmall,
+                      commonTextFieldDark("Team Name", _bowlingTeamController),
+                      marginSpaceLarge,
+                      const Text(
+                        "Bowlers",
+                        style: subtitleStyleDark,
+                      ),
+                      marginSpaceSmall,
+                      ...List.generate(5, (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(
+                                Icons.photo,
+                                color: Colors.lightGreenAccent,
+                              ),
+                            ),
+                            Expanded(
+                              child: commonTextFieldDark(
+                                  "Bowler${index + 1}",
+                                  _bowlerControllers[index]
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                      marginSpaceMedium,
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
-        ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(borderPadding),
+            width: double.infinity,
+            child: ElevatedButton(
+                onPressed: _startMatch,
+                style: primaryButtonStyle,
+                child:
+                const Text("Start Match"),
+            ),
+          ),
+        ],
       ),
-    );
+    ),
+  );
   }
 }
