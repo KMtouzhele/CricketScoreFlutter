@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'common/constants.dart';
-import 'common/widgets.dart';
+import '../common/constants.dart';
+import '../common/widgets.dart';
 import 'match_setup_page.dart';
 
 class MatchHistoryPage extends StatefulWidget {

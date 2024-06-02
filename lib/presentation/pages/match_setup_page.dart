@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import '../data/datasource/match_setup_data.dart';
-import '../domain/entities/player.dart';
-import '../domain/repositories/match_repository.dart';
-import '../domain/usecases/user_create_match.dart';
-import 'common/constants.dart';
-import 'common/widgets.dart';
+import 'package:provider/provider.dart';
+import '../../data/datasource/match_setup_data.dart';
+import '../../domain/entities/player.dart';
+import '../../domain/repositories/match_repository.dart';
+import '../../domain/usecases/user_create_match.dart';
+import 'bottom_navi_page.dart';
+import '../common/constants.dart';
+import '../common/widgets.dart';
+import '../models/match_info_model.dart';
 
 class MatchSetupPage extends StatefulWidget {
   const MatchSetupPage({super.key});
@@ -29,7 +32,7 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
   }
 
   Future<void> _startMatch() async {
-    if (!isInputEmpty()) {
+    if (!_isInputEmpty()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please fill all the fields"),
@@ -38,7 +41,7 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
       return;
     }
 
-    if (isInputRepeated()) {
+    if (_isInputRepeated()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please enter unique names"),
@@ -46,10 +49,13 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
       );
       return;
     }
+
     String battingTeamName = _battingTeamController.text;
     String bowlingTeamName = _bowlingTeamController.text;
+
     Map<String, int> battersMap = {};
     Map<String, int> bowlersMap = {};
+
     for (var i = 0; i < 5; i++) {
       if (_batterControllers[i].text.isNotEmpty) {
         battersMap[_batterControllers[i].text] = i + 1;
@@ -58,13 +64,37 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
         bowlersMap[_bowlerControllers[i].text] = i + 1;
       }
     }
-     Map<String, String> matchInfo = await _userCreateMatch.createMatch(
-         battingTeamName, bowlingTeamName, battersMap, bowlersMap
-     );
-    print(matchInfo);
+
+    _showCreatingDialog();
+
+    try {
+      Map<String, String> matchInfo = await _userCreateMatch.createMatch(
+          battingTeamName, bowlingTeamName, battersMap, bowlersMap
+      );
+      if (mounted) {
+        context.read<MatchInfoModel>().add(matchInfo);
+        print(matchInfo);
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BottomNaviPage(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to create match: $e"),
+          ),
+        );
+      }
+    }
   }
 
-  bool isInputEmpty() {
+  bool _isInputEmpty() {
     if (_battingTeamController.text.isEmpty) {
       return false;
     }
@@ -82,7 +112,7 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
     return true;
   }
 
-  bool isInputRepeated() {
+  bool _isInputRepeated() {
     List<String> allNames = [];
     allNames.add(_battingTeamController.text);
     allNames.add(_bowlingTeamController.text);
@@ -98,6 +128,29 @@ class _MatchSetupPageState extends State<MatchSetupPage> {
       }
     }
     return false;
+  }
+
+  void _showCreatingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.lightGreenAccent),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15),
+                child: Text("Creating Match..."),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override

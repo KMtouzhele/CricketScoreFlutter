@@ -17,8 +17,8 @@ class UserCreateMatch {
     Team battingTeam = Team(teamName: battingTeamName, teamType: TeamType.batting);
     Team bowlingTeam = Team(teamName: bowlingTeamName, teamType: TeamType.bowling);
     //Save teams
-    String battingTeamId = await addTeam(battingTeam);
-    String bowlingTeamId = await addTeam(bowlingTeam);
+    String battingTeamId = await _addTeam(battingTeam);
+    String bowlingTeamId = await _addTeam(bowlingTeam);
 
     //Assemble players
     List<Player> batters = [];
@@ -41,10 +41,10 @@ class UserCreateMatch {
     });
     //Save players
     for (var batter in batters) {
-      String _ = await addPlayer(batter);
+      String _ = await _addPlayer(batter);
     }
     for (var bowler in bowlers) {
-      String _ = await addPlayer(bowler);
+      String _ = await _addPlayer(bowler);
     }
 
     //Assemble match
@@ -53,7 +53,7 @@ class UserCreateMatch {
         bowlingTeamId: bowlingTeamId,
     );
     //Save match
-    String matchId = await addMatch(match);
+    String matchId = await _addMatch(match);
 
     Map<String, String> matchInfo = {
       'MatchId': matchId,
@@ -63,15 +63,15 @@ class UserCreateMatch {
     return matchInfo;
   }
 
-  Future<String> addTeam(Team team) {
+  Future<String> _addTeam(Team team) {
     return _repository.addTeam(team);
   }
 
-  Future<String> addPlayer(Player player) {
+  Future<String> _addPlayer(Player player) {
     return _repository.addPlayer(player);
   }
 
-  Future<String> addMatch(Match match) {
+  Future<String> _addMatch(Match match) {
     return _repository.addMatch(match);
   }
 }
