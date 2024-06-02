@@ -1,4 +1,6 @@
 import 'package:crossplatform/presentation/models/match_info_model.dart';
+import 'package:crossplatform/presentation/models/match_progress_model.dart';
+import 'package:crossplatform/presentation/models/players_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/pages/match_history_page.dart';
@@ -16,8 +18,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MatchInfoModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => MatchInfoModel()),
+        ChangeNotifierProvider(create: (context) => PlayersModel()),
+        ChangeNotifierProvider(create: (context) => MatchProgressModel()),
+      ],
       child: MaterialApp(
         title: 'CricketScore',
         theme: ThemeData(
