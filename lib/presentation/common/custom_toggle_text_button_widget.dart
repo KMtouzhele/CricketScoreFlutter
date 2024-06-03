@@ -1,36 +1,22 @@
 import 'package:flutter/material.dart';
 
-class CustomToggleTextButtonWidget extends StatefulWidget {
+class CustomToggleTextButtonWidget extends StatelessWidget {
   final String text;
+  final bool isSelected;
   final VoidCallback? onPressed;
 
   const CustomToggleTextButtonWidget({
     super.key,
+    required this.isSelected,
     this.onPressed,
     required this.text,
   });
 
   @override
-  CustomToggleTextButtonWidgetState createState() => CustomToggleTextButtonWidgetState();
-}
-
-class CustomToggleTextButtonWidgetState extends State<CustomToggleTextButtonWidget> {
-  bool isSelected = false;
-
-  void _toggleButton() {
-    setState(() {
-      isSelected = !isSelected;
-    });
-    if (widget.onPressed != null) {
-      widget.onPressed!();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TextButton(
-        onPressed: _toggleButton,
+        onPressed: onPressed,
         style: TextButton.styleFrom(
           foregroundColor: isSelected ? Colors.lightGreenAccent : Colors.black,
           backgroundColor: isSelected ? Colors.black : Colors.transparent,
@@ -39,13 +25,14 @@ class CustomToggleTextButtonWidgetState extends State<CustomToggleTextButtonWidg
           ),
         ),
         child: Text(
-          widget.text,
+          text,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-          )
+          ),
         ),
       ),
     );
   }
 }
+

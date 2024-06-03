@@ -56,6 +56,21 @@ class MatchProgressModel extends ChangeNotifier {
     return matchProgress;
   }
 
+  void changeStriker(String strikerId){
+    matchProgress["currentStrikerId"] = strikerId;
+    update();
+  }
+
+  void changeNonStriker(String nonStrikerId){
+    matchProgress["currentNonStrikerId"] = nonStrikerId;
+    update();
+  }
+
+  void changeBowler(String bowlerId){
+    matchProgress["currentBowlerId"] = bowlerId;
+    update();
+  }
+
 
   void swap(){
     Map<String, dynamic> newMatchProgress = {

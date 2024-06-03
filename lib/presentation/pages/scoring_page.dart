@@ -22,10 +22,28 @@ class ScoringPage extends StatefulWidget {
 class _ScoringPageState extends State<ScoringPage>{
   final ScoringRepository _scoringRepository = FetchTeamInfo();
   late final GetTeamInfo _getTeamInfo;
-  String selectedBatterName = 'Select';
-  String selectedNonStrikerName = 'Select';
-  String selectedBowlerName = 'Select';
 
+  Map<String, bool> buttonStates = {
+    '1': false,
+    '2': false,
+    '3': false,
+    '4': false,
+    '5': false,
+    '6': false,
+    '7': false,
+    '8': false,
+    '4S': false,
+    '6S': false,
+    'NB': false,
+    'WD': false,
+    'B': false,
+    'C': false,
+    'LBW': false,
+    'RO': false,
+    'ST': false,
+    'HW': false,
+    'CB': false,
+  };
 
   @override
   void initState() {
@@ -38,6 +56,31 @@ class _ScoringPageState extends State<ScoringPage>{
       final bowlers = await _getTeamInfo.getTeamInfo(bowlingTeamId);
       context.read<PlayersModel>().addBatters(batters);
       context.read<PlayersModel>().addBowlers(bowlers);
+  }
+
+  void toggleButtonState(String buttonKey) {
+    setState(() {
+      buttonStates.forEach((key, value) {
+        if (key != buttonKey) {
+          buttonStates[key] = false;
+        }
+      });
+      buttonStates[buttonKey] = !buttonStates[buttonKey]!;
+    });
+  }
+
+  void _emptyValidation(){
+    if (!buttonStates.containsValue(true)) {
+      _showSnackBar("Please select a ball result!");
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   @override
@@ -58,7 +101,32 @@ class _ScoringPageState extends State<ScoringPage>{
     final batters = context.watch<PlayersModel>().getBatters();
     final bowlers = context.watch<PlayersModel>().getBowlers();
 
+
+    if (batters.isEmpty || bowlers.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.lightGreenAccent),
+              ),
+              Text("Loading..."),
+            ],
+          ),
+        ),
+      );
+    }
+
+
     final matchProgress = Provider.of<MatchProgressModel>(context).get();
+    final currentStrikerId = matchProgress['currentStrikerId'];
+    final currentNonStrikerId = matchProgress['currentNonStrikerId'];
+    final currentBowlerId = matchProgress['currentBowlerId'];
+
+    final currentStriker = batters.firstWhere((element) => element['id'] == currentStrikerId, orElse: () => {'name': 'Select'});
+    final currentNonStriker = batters.firstWhere((element) => element['id'] == currentNonStrikerId, orElse: () => {'name': 'Select'});
+    final currentBowler = bowlers.firstWhere((element) => element['id'] == currentBowlerId, orElse: () => {'name': 'Select'});
+
     return Scaffold(
     appBar: AppBar(
       title: const Text("Scoring"),
@@ -101,14 +169,13 @@ class _ScoringPageState extends State<ScoringPage>{
                     child: IntrinsicHeight(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_cricket_rounded),
+                          Icon(Icons.sports_cricket_rounded, color: Colors.purpleAccent,),
                           CustomPopupMenuButton(
-                              initialValue: selectedBatterName,
+                              initialPlayer: currentStriker,
                               items: batters,
-                              onSelected: (String name) {
-                                setState(() {
-                                  selectedBatterName = name;
-                                });
+                              onSelected: (Map<String, dynamic> selectedPlayer) {
+                                context.read<MatchProgressModel>().changeStriker(selectedPlayer['id']);
+                                print('Current StrikerId: ${matchProgress['currentStrikerId']}');
                               },
                           ),
                           Text(matchProgress['strikerRuns'].toString()),
@@ -125,12 +192,11 @@ class _ScoringPageState extends State<ScoringPage>{
                         children: [
                           Icon(Icons.sports_cricket_outlined),
                           CustomPopupMenuButton(
-                            initialValue: selectedNonStrikerName,
+                            initialPlayer: currentNonStriker,
                             items: batters,
-                            onSelected: (String name) {
-                              setState(() {
-                                selectedNonStrikerName = name;
-                              });
+                            onSelected: (Map<String, dynamic> selectedPlayer) {
+                              context.read<MatchProgressModel>().changeNonStriker(selectedPlayer['id']);
+                              print('Current nonStrikerId: ${matchProgress['currentNonStrikerId']}');
                             },
                           ),
                           Text(matchProgress['nonStrikerRuns'].toString()),
@@ -189,12 +255,11 @@ class _ScoringPageState extends State<ScoringPage>{
                         children: [
                           Icon(Icons.sports_baseball, color: Colors.lightGreenAccent,),
                           CustomPopupMenuButtonDark(
-                              initialValue: selectedBowlerName,
+                              initialPlayer: currentBowler,
                               items: bowlers,
-                              onSelected: (String name) {
-                                setState(() {
-                                  selectedBowlerName = name;
-                                });
+                              onSelected: (Map<String, dynamic> selectedPlayer) {
+                                context.read<MatchProgressModel>().changeBowler(selectedPlayer['id']);
+                                print('Current bowlerId: ${matchProgress['currentBowlerId']}');
                               },
                           ),
                           Text(
@@ -228,39 +293,79 @@ class _ScoringPageState extends State<ScoringPage>{
                   Row(
                     children: [
                       CustomToggleTextButtonWidget(
+                        onPressed:() => toggleButtonState('1'),
+                        isSelected: buttonStates['1'] ?? false,
                         text: "1",
-                        onPressed: (){
-                          print("1 runs was tapped");
-                        },
                       ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "2",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('2'),
+                        isSelected: buttonStates['2'] ?? false,
+                        text: "2",),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "3",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('3'),
+                        isSelected: buttonStates['3'] ?? false,
+                        text: "3",),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "4",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('4'),
+                        isSelected: buttonStates['4'] ?? false,
+                        text: "4",),
                     ],
                   ),
                   Row(
                     children: [
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "5",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('5'),
+                        isSelected: buttonStates['5'] ?? false,
+                        text: "5",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "6",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('6'),
+                        isSelected: buttonStates['6'] ?? false,
+                        text: "6",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "7",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('7'),
+                        isSelected: buttonStates['7'] ?? false,
+                        text: "7",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "8",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('8'),
+                        isSelected: buttonStates['8'] ?? false,
+                        text: "8",
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "4S",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('4S'),
+                        isSelected: buttonStates['4S'] ?? false,
+                        text: "4S",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "6S",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('6S'),
+                        isSelected: buttonStates['6S'] ?? false,
+                        text: "6S",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "NB",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('NB'),
+                        isSelected: buttonStates['NB'] ?? false,
+                        text: "NB",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "WD",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('WD'),
+                        isSelected: buttonStates['WD'] ?? false,
+                        text: "WD",
+                      ),
                     ],
                   ),
                   Divider(
@@ -269,26 +374,56 @@ class _ScoringPageState extends State<ScoringPage>{
                   ),
                   Row(
                     children: [
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "B",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('B'),
+                        isSelected: buttonStates['B'] ?? false,
+                        text: "B",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "C",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('C'),
+                        isSelected: buttonStates['C'] ?? false,
+                        text: "C",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "LBW",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('LBW'),
+                        isSelected: buttonStates['LBW'] ?? false,
+                        text: "LBW",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "RO",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('RO'),
+                        isSelected: buttonStates['RO'] ?? false,
+                        text: "RO",
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "ST",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('ST'),
+                        isSelected: buttonStates['ST'] ?? false,
+                        text: "ST",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "HW",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('HW'),
+                        isSelected: buttonStates['HW'] ?? false,
+                        text: "HW",
+                      ),
                       marginSpaceSmallV,
-                      CustomToggleTextButtonWidget(onPressed: (){} , text: "C&B",),
+                      CustomToggleTextButtonWidget(
+                        onPressed: () => toggleButtonState('CB'),
+                        isSelected: buttonStates['CB'] ?? false,
+                        text: "C&B",
+                      ),
                       marginSpaceSmallV,
                       Expanded(
                         child: IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            _emptyValidation();
+                          },
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(Colors.purpleAccent),
                             foregroundColor: WidgetStateProperty.all(Colors.lightGreenAccent),
