@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 
 class CustomPopupMenuButton extends StatelessWidget {
-  final String initialValue;
+  final Map<String, dynamic> initialPlayer;
   final List<Map<String, dynamic>> items;
-  final void Function(String) onSelected;
+  final void Function(Map<String, dynamic>) onSelected;
 
   const CustomPopupMenuButton({
     super.key,
-    required this.initialValue,
+    required this.initialPlayer,
     required this.items,
     required this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      initialValue: initialValue,
+    return PopupMenuButton<Map<String, dynamic>>(
+      initialValue: initialPlayer,
       onSelected: onSelected,
       itemBuilder: (BuildContext context) {
         return items.map((item) {
-          return PopupMenuItem<String>(
-            value: item['name'],
+          return PopupMenuItem<Map<String, dynamic>>(
+            value: item,
             child: Text(item['name']),
           );
         }).toList();
       },
       child: Text(
-        initialValue,
+        initialPlayer['name'],
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
