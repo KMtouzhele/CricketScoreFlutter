@@ -1,8 +1,10 @@
 import 'package:crossplatform/data/datasource/fetch_team_info.dart';
 import 'package:crossplatform/domain/repositories/scoring_repository.dart';
 import 'package:crossplatform/domain/usecases/get_team_info.dart';
+import 'package:crossplatform/presentation/common/constants.dart';
 import 'package:crossplatform/presentation/common/custom_popup_menu_dark_widget.dart';
 import 'package:crossplatform/presentation/common/custom_popup_menu_widget.dart';
+import 'package:crossplatform/presentation/common/custom_toggle_text_button_widget.dart';
 import 'package:crossplatform/presentation/models/match_info_model.dart';
 import 'package:crossplatform/presentation/models/players_model.dart';
 import 'package:flutter/material.dart';
@@ -61,153 +63,252 @@ class _ScoringPageState extends State<ScoringPage>{
     appBar: AppBar(
       title: const Text("Scoring"),
     ),
-    body: Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.lightGreenAccent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Batters",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16,),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.lightGreenAccent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.person),
+                          Text(
+                            "Batters",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text("Runs"),
-                        Text("Balls Faced"),
-                        Text("Fours"),
-                        Text("Sixes"),
-                      ],
+                          Text("Runs"),
+                          Text("Balls Faced"),
+                          Text("Fours"),
+                          Text("Sixes"),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      children: [
-                        CustomPopupMenuButton(
-                            initialValue: selectedBatterName,
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          Icon(Icons.sports_cricket_rounded),
+                          CustomPopupMenuButton(
+                              initialValue: selectedBatterName,
+                              items: batters,
+                              onSelected: (String name) {
+                                setState(() {
+                                  selectedBatterName = name;
+                                });
+                              },
+                          ),
+                          Text(matchProgress['strikerRuns'].toString()),
+                          Text(matchProgress['strikerBalls'].toString()),
+                          Text(matchProgress['strikerFours'].toString()),
+                          Text(matchProgress['strikerSixes'].toString()),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          Icon(Icons.sports_cricket_outlined),
+                          CustomPopupMenuButton(
+                            initialValue: selectedNonStrikerName,
                             items: batters,
                             onSelected: (String name) {
                               setState(() {
-                                selectedBatterName = name;
+                                selectedNonStrikerName = name;
                               });
                             },
-                        ),
-                        Text(matchProgress['strikerRuns'].toString()),
-                        Text(matchProgress['strikerBalls'].toString()),
-                        Text(matchProgress['strikerFours'].toString()),
-                        Text(matchProgress['strikerSixes'].toString()),
-                      ],
+                          ),
+                          Text(matchProgress['nonStrikerRuns'].toString()),
+                          Text(matchProgress['nonStrikerBalls'].toString()),
+                          Text(matchProgress['nonStrikerFours'].toString()),
+                          Text(matchProgress['nonStrikerSixes'].toString()),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      children: [
-                        CustomPopupMenuButton(
-                          initialValue: selectedNonStrikerName,
-                          items: batters,
-                          onSelected: (String name) {
-                            setState(() {
-                              selectedNonStrikerName = name;
-                            });
-                          },
-                        ),
-                        Text(matchProgress['nonStrikerRuns'].toString()),
-                        Text(matchProgress['nonStrikerBalls'].toString()),
-                        Text(matchProgress['nonStrikerFours'].toString()),
-                        Text(matchProgress['nonStrikerSixes'].toString()),
-                      ],
+                ],
+              ),
+            ),
+            marginSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.person, color: Colors.lightGreenAccent,),
+                          Text(
+                            "Bowler",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.lightGreenAccent,
+                            ),
+                          ),
+                          Text(
+                              "Wickets",
+                              style: TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                          Text(
+                              "Runs Lost",
+                              style: TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                          Text(
+                              "Balls Bowled",
+                              style: TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          Icon(Icons.sports_baseball, color: Colors.lightGreenAccent,),
+                          CustomPopupMenuButtonDark(
+                              initialValue: selectedBowlerName,
+                              items: bowlers,
+                              onSelected: (String name) {
+                                setState(() {
+                                  selectedBowlerName = name;
+                                });
+                              },
+                          ),
+                          Text(
+                              matchProgress['bowlerWickets'].toString(),
+                              style: const TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                          Text(
+                              matchProgress['bowlerRunsLost'].toString(),
+                              style: const TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                          Text(
+                              matchProgress['bowlerBalls'].toString(),
+                              style: const TextStyle(color: Colors.lightGreenAccent)
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Bowler",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.lightGreenAccent,
+            marginSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.lightGreenAccent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CustomToggleTextButtonWidget(
+                        text: "1",
+                        onPressed: (){
+                          print("1 runs was tapped");
+                        },
+                      ),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "2",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "3",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "4",),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "5",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "6",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "7",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "8",),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "4S",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "6S",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "NB",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "WD",),
+                    ],
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    thickness: 0.5,
+                  ),
+                  Row(
+                    children: [
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "B",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "C",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "LBW",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "RO",),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "ST",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "HW",),
+                      marginSpaceSmallV,
+                      CustomToggleTextButtonWidget(onPressed: (){} , text: "C&B",),
+                      marginSpaceSmallV,
+                      Expanded(
+                        child: IconButton(
+                          onPressed: (){},
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(Colors.purpleAccent),
+                            foregroundColor: WidgetStateProperty.all(Colors.lightGreenAccent),
+                            shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            )),
+                          ),
+                          icon: const Icon(
+                            Icons.check_rounded,
+                            size: 30,
                           ),
                         ),
-                        Text(
-                            "Wickets",
-                            style: TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                        Text(
-                            "Runs Lost",
-                            style: TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                        Text(
-                            "Balls Bowled",
-                            style: TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Column(
-                      children: [
-                        CustomPopupMenuButtonDark(
-                            initialValue: selectedBowlerName,
-                            items: bowlers,
-                            onSelected: (String name) {
-                              setState(() {
-                                selectedBowlerName = name;
-                              });
-                            },
-                        ),
-                        Text(
-                            matchProgress['bowlerWickets'].toString(),
-                            style: const TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                        Text(
-                            matchProgress['bowlerRunsLost'].toString(),
-                            style: const TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                        Text(
-                            matchProgress['bowlerBalls'].toString(),
-                            style: const TextStyle(color: Colors.lightGreenAccent)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
