@@ -59,6 +59,20 @@ class Ball {
       default: return false;
     }
   }
+
+  Map<String, dynamic> toJson(){
+    return {
+      'matchId': matchId,
+      'strikerId': strikerId,
+      'nonStrikerId': nonStrikerId,
+      'bowlerId': bowlerId,
+      'ballType': ballType.toString().split('.').last,
+      'runs': runs,
+      'extraRuns': extraRuns,
+      'isBallDelivered': isBallDelivered,
+      'timestamp': timestamp.toIso8601String()
+    };
+  }
 }
 
 enum BallType {

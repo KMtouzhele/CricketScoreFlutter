@@ -1,6 +1,9 @@
 import 'package:crossplatform/data/datasource/fetch_team_info.dart';
+import 'package:crossplatform/data/datasource/save_ball_data.dart';
+import 'package:crossplatform/domain/repositories/add_ball_repository.dart';
 import 'package:crossplatform/domain/repositories/scoring_repository.dart';
 import 'package:crossplatform/domain/usecases/get_team_info.dart';
+import 'package:crossplatform/domain/usecases/user_add_ball.dart';
 import 'package:crossplatform/presentation/common/constants.dart';
 import 'package:crossplatform/presentation/common/custom_popup_menu_dark_widget.dart';
 import 'package:crossplatform/presentation/common/custom_popup_menu_widget.dart';
@@ -21,7 +24,9 @@ class ScoringPage extends StatefulWidget {
 
 class _ScoringPageState extends State<ScoringPage>{
   final ScoringRepository _scoringRepository = FetchTeamInfo();
+  final AddBallRepository _addBallRepository = SaveBallData();
   late final GetTeamInfo _getTeamInfo;
+  late final UserAddBall _userAddBall;
 
   Map<String, bool> buttonStates = {
     '1': false,
@@ -49,6 +54,7 @@ class _ScoringPageState extends State<ScoringPage>{
   void initState() {
     super.initState();
     _getTeamInfo = GetTeamInfo(_scoringRepository);
+    _userAddBall = UserAddBall(_addBallRepository);
   }
 
   void _fetchTeamInfo(String battingTeamId, String bowlingTeamId) async {
@@ -66,6 +72,14 @@ class _ScoringPageState extends State<ScoringPage>{
         }
       });
       buttonStates[buttonKey] = !buttonStates[buttonKey]!;
+    });
+  }
+
+  void _clearButtonStates() {
+    setState(() {
+      buttonStates.forEach((key, value) {
+        buttonStates[key] = false;
+      });
     });
   }
 
@@ -87,6 +101,7 @@ class _ScoringPageState extends State<ScoringPage>{
   Widget build(BuildContext context) {
 
     final matchInfo = Provider.of<MatchInfoModel>(context).get();
+    final matchId = matchInfo['MatchId'];
     final battingTeamId = matchInfo['BattingTeamId'];
     final bowlingTeamId = matchInfo['BowlingTeamId'];
     if (battingTeamId == null || bowlingTeamId == null) {
@@ -94,14 +109,12 @@ class _ScoringPageState extends State<ScoringPage>{
     } else {
       _fetchTeamInfo(battingTeamId, bowlingTeamId);
     }
-    return buildScaffold();
+    return buildScaffold(matchId ?? "");
   }
 
-  Scaffold buildScaffold() {
+  Scaffold buildScaffold(String matchId) {
     final batters = context.watch<PlayersModel>().getBatters();
     final bowlers = context.watch<PlayersModel>().getBowlers();
-
-
     if (batters.isEmpty || bowlers.isEmpty) {
       return const Scaffold(
         body: Center(
@@ -423,6 +436,15 @@ class _ScoringPageState extends State<ScoringPage>{
                         child: IconButton(
                           onPressed: (){
                             _emptyValidation();
+                            _userAddBall.addBall(
+                                matchId,
+                                currentStriker['id'],
+                                currentNonStriker['id'],
+                                currentBowler['id'],
+                                buttonStates
+                            );
+                            _clearButtonStates();
+
                           },
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(Colors.purpleAccent),
