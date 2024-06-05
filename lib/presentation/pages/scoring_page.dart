@@ -89,33 +89,63 @@ class _ScoringPageState extends State<ScoringPage>{
   bool _emptyValidation(){
     final matchProgressMap = Provider.of<MatchProgressModel>(context, listen: false).get();
     if (!buttonStates.containsValue(true)) {
-      _showSnackBar("Please select a ball result!");
+      _showErrorSnackBar("Please select a ball result!");
       return false;
     }
     if (matchProgressMap['currentStrikerId'] == "") {
-      _showSnackBar("Please select a striker!");
+      _showErrorSnackBar("Please select a striker!");
       return false;
     }
     if (matchProgressMap['currentNonStrikerId'] == "") {
-      _showSnackBar("Please select a non-striker!");
+      _showErrorSnackBar("Please select a non-striker!");
       return false;
     }
     if (matchProgressMap['currentBowlerId'] == "") {
-      _showSnackBar("Please select a bowler!");
+      _showErrorSnackBar("Please select a bowler!");
       return false;
     }
     if (matchProgressMap['currentStrikerId'] == matchProgressMap['currentNonStrikerId']) {
-      _showSnackBar("Striker and non-striker cannot be the same player!");
+      _showErrorSnackBar("Striker and non-striker cannot be the same player!");
       return false;
     } else {
       return true;
     }
   }
 
-  void _showSnackBar(String message) {
+  void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(
+              Icons.error,
+              color: Colors.lightGreenAccent,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(message),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.check,
+              color: Colors.lightGreenAccent,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(message),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -499,6 +529,7 @@ class _ScoringPageState extends State<ScoringPage>{
                               );
                               _userAddBall.updateScoreBoard(buttonStates);
                               _clearButtonStates();
+                              _showSuccessSnackBar("Ball added successfully!");
                               if(_userAddBall.isMatchEnded()){
                                 print('Match completed!');
                                 //pop up a dialog box

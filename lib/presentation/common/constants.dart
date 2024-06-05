@@ -16,3 +16,5 @@ const SizedBox marginSpaceLarge = SizedBox(height: 32.0);
 
 const SizedBox marginSpaceSmallV = SizedBox(width: 8.0);
 
+const SizedBox marginSpaceMediumV = SizedBox(width: 16.0);
+
