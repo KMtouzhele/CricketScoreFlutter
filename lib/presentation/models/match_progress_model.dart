@@ -71,8 +71,139 @@ class MatchProgressModel extends ChangeNotifier {
     update();
   }
 
+  void addBall(Map<String, bool> buttonStates){
+    bool isBallDelivered = _isBallDelivered(buttonStates);
+    int runs = _calculateNewRuns(buttonStates);
+    int extraRuns = _calculateExtraRuns(buttonStates);
+    matchProgress['totalRuns'] += runs + extraRuns;
 
-  void swap(){
+    bool isWicket = _isWicket(buttonStates);
+    matchProgress['totalWickets'] += isWicket ? 1 : 0;
+
+    matchProgress['totalBallDelivered'] += isBallDelivered ? 1 : 0;
+    matchProgress['totalExtras'] += isBallDelivered ? 0 : 1;
+
+    matchProgress['strikerRuns'] += runs;
+    matchProgress['strikerBalls'] += isBallDelivered ? 1 : 0;
+    matchProgress['strikerFours'] += buttonStates['4S'] == true ? 1 : 0;
+    matchProgress['strikerSixes'] += buttonStates['6S'] == true ? 1 : 0;
+
+    matchProgress['bowlerWickets'] += isWicket ? 1 : 0;
+    matchProgress['bowlerBalls'] += isBallDelivered ? 1 : 0;
+    matchProgress['bowlerRunsLost'] += runs + extraRuns;
+
+    matchProgress["currentBall"] += isBallDelivered ? 1 : 0;
+    if (matchProgress["currentBall"] == 6) {
+      _bowlerDismissed();
+      matchProgress["currentOver"] += 1;
+      matchProgress["currentBall"] = 0;
+    }
+
+    if (isWicket) {
+      _strikerDismissed();
+    }
+
+    if (runs % 2 == 1) {
+      _swap();
+    }
+
+    update();
+  }
+
+  int _calculateNewRuns(Map<String, bool> buttonStates){
+    int runs = 0;
+    buttonStates.forEach((button, status) {
+      if(status == true) {
+        switch(button){
+          case '1': runs = 1;
+          break;
+          case '2': runs = 2;
+          break;
+          case '3': runs = 3;
+          break;
+          case '4': runs = 4;
+          break;
+          case '5': runs = 5;
+          break;
+          case '6': runs = 6;
+          break;
+          case '7': runs = 7;
+          break;
+          case '8': runs = 8;
+          break;
+          case '4S': runs = 4;
+          break;
+          case '6S': runs = 6;
+          break;
+          default: runs = 0;
+        }
+      }
+    });
+    return runs;
+  }
+
+  int _calculateExtraRuns(Map<String, bool> buttonStates){
+    int extraRuns = 0;
+    buttonStates.forEach((button, status) {
+      if(status == true) {
+        switch(button){
+          case 'NB': extraRuns = 1;
+          break;
+          case 'WD': extraRuns = 1;
+          break;
+          default: extraRuns = 0;
+        }
+      }
+    });
+    return extraRuns;
+  }
+
+  bool _isBallDelivered(Map<String, bool> buttonStates){
+    bool isBallDelivered = true;
+    buttonStates.forEach((button, status) {
+      if(status == true) {
+        switch(button){
+          case 'NB': isBallDelivered = false;
+          break;
+          case 'WD': isBallDelivered = false;
+          break;
+          default: isBallDelivered = true;
+        }
+      }
+    });
+    return isBallDelivered;
+  }
+
+  bool _isWicket(Map<String, bool> buttonStates){
+    bool isWicket = false;
+    buttonStates.forEach((button, status) {
+      if(status == true) {
+        switch(button){
+          case 'B': isWicket = true;
+          break;
+          case 'C': isWicket = true;
+          break;
+          case 'RO': isWicket = true;
+          break;
+          case 'ST': isWicket = true;
+          break;
+          case 'LBW': isWicket = true;
+          break;
+          case 'HW': isWicket = true;
+          break;
+          case 'CB': isWicket = true;
+          break;
+          default: isWicket = false;
+        }
+      }
+    });
+    return isWicket;
+  }
+
+
+
+
+  void _swap(){
     Map<String, dynamic> newMatchProgress = {
       "currentBall": matchProgress["currentBall"],
       "currentOver": matchProgress["currentOver"],
@@ -101,6 +232,22 @@ class MatchProgressModel extends ChangeNotifier {
     };
     matchProgress = newMatchProgress;
     update();
+  }
+
+  void _strikerDismissed(){
+    matchProgress['currentStrikerId'] = "";
+    matchProgress['strikerRuns'] = 0;
+    matchProgress['strikerBalls'] = 0;
+    matchProgress['strikerFours'] = 0;
+    matchProgress['strikerSixes'] = 0;
+    update();
+  }
+
+  void _bowlerDismissed(){
+    matchProgress['currentBowlerId'] = "";
+    matchProgress['bowlerWickets'] = 0;
+    matchProgress['bowlerBalls'] = 0;
+    matchProgress['bowlerRunsLost'] = 0;
   }
 
   void update() {

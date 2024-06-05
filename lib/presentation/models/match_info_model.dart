@@ -13,6 +13,7 @@ class MatchInfoModel extends ChangeNotifier {
     update();
   }
 
+
   void update() {
     notifyListeners();
   }

@@ -10,6 +10,7 @@ import 'package:crossplatform/presentation/common/custom_popup_menu_widget.dart'
 import 'package:crossplatform/presentation/common/custom_toggle_text_button_widget.dart';
 import 'package:crossplatform/presentation/models/match_info_model.dart';
 import 'package:crossplatform/presentation/models/players_model.dart';
+import 'package:crossplatform/presentation/pages/match_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,8 +54,10 @@ class _ScoringPageState extends State<ScoringPage>{
   @override
   void initState() {
     super.initState();
+    final matchProgressModel = Provider.of<MatchProgressModel>(context, listen: false);
+    final playersModel = Provider.of<PlayersModel>(context, listen: false);
     _getTeamInfo = GetTeamInfo(_scoringRepository);
-    _userAddBall = UserAddBall(_addBallRepository);
+    _userAddBall = UserAddBall(_addBallRepository, matchProgressModel, playersModel);
   }
 
   void _fetchTeamInfo(String battingTeamId, String bowlingTeamId) async {
@@ -83,9 +86,29 @@ class _ScoringPageState extends State<ScoringPage>{
     });
   }
 
-  void _emptyValidation(){
+  bool _emptyValidation(){
+    final matchProgressMap = Provider.of<MatchProgressModel>(context, listen: false).get();
     if (!buttonStates.containsValue(true)) {
       _showSnackBar("Please select a ball result!");
+      return false;
+    }
+    if (matchProgressMap['currentStrikerId'] == "") {
+      _showSnackBar("Please select a striker!");
+      return false;
+    }
+    if (matchProgressMap['currentNonStrikerId'] == "") {
+      _showSnackBar("Please select a non-striker!");
+      return false;
+    }
+    if (matchProgressMap['currentBowlerId'] == "") {
+      _showSnackBar("Please select a bowler!");
+      return false;
+    }
+    if (matchProgressMap['currentStrikerId'] == matchProgressMap['currentNonStrikerId']) {
+      _showSnackBar("Striker and non-striker cannot be the same player!");
+      return false;
+    } else {
+      return true;
     }
   }
 
@@ -97,13 +120,36 @@ class _ScoringPageState extends State<ScoringPage>{
     );
   }
 
+  void _showDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Match Completed"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MatchHistoryPage()),
+                );
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    final matchInfo = Provider.of<MatchInfoModel>(context).get();
-    final matchId = matchInfo['MatchId'];
-    final battingTeamId = matchInfo['BattingTeamId'];
-    final bowlingTeamId = matchInfo['BowlingTeamId'];
+    final matchInfoMap = Provider.of<MatchInfoModel>(context).get();
+    final matchId = matchInfoMap['MatchId'];
+    final battingTeamId = matchInfoMap['BattingTeamId'];
+    final bowlingTeamId = matchInfoMap['BowlingTeamId'];
     if (battingTeamId == null || bowlingTeamId == null) {
       print('Team Ids are null');
     } else {
@@ -119,6 +165,8 @@ class _ScoringPageState extends State<ScoringPage>{
       return const Scaffold(
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.lightGreenAccent),
@@ -131,14 +179,20 @@ class _ScoringPageState extends State<ScoringPage>{
     }
 
 
-    final matchProgress = Provider.of<MatchProgressModel>(context).get();
-    final currentStrikerId = matchProgress['currentStrikerId'];
-    final currentNonStrikerId = matchProgress['currentNonStrikerId'];
-    final currentBowlerId = matchProgress['currentBowlerId'];
+    final matchProgressMap = Provider.of<MatchProgressModel>(context).get();
+    final currentStrikerId = matchProgressMap['currentStrikerId'];
+    final currentNonStrikerId = matchProgressMap['currentNonStrikerId'];
+    final currentBowlerId = matchProgressMap['currentBowlerId'];
 
-    final currentStriker = batters.firstWhere((element) => element['id'] == currentStrikerId, orElse: () => {'name': 'Select'});
-    final currentNonStriker = batters.firstWhere((element) => element['id'] == currentNonStrikerId, orElse: () => {'name': 'Select'});
-    final currentBowler = bowlers.firstWhere((element) => element['id'] == currentBowlerId, orElse: () => {'name': 'Select'});
+    final currentStriker = batters.firstWhere(
+            (element) => element['id'] == currentStrikerId,orElse: () => {'name': 'Select'}
+    );
+    final currentNonStriker = batters.firstWhere(
+            (element) => element['id'] == currentNonStrikerId, orElse: () => {'name': 'Select'}
+    );
+    final currentBowler = bowlers.firstWhere(
+            (element) => element['id'] == currentBowlerId, orElse: () => {'name': 'Select'}
+    );
 
     return Scaffold(
     appBar: AppBar(
@@ -188,13 +242,13 @@ class _ScoringPageState extends State<ScoringPage>{
                               items: batters,
                               onSelected: (Map<String, dynamic> selectedPlayer) {
                                 context.read<MatchProgressModel>().changeStriker(selectedPlayer['id']);
-                                print('Current StrikerId: ${matchProgress['currentStrikerId']}');
+                                print('Current StrikerId: ${matchProgressMap['currentStrikerId']}');
                               },
                           ),
-                          Text(matchProgress['strikerRuns'].toString()),
-                          Text(matchProgress['strikerBalls'].toString()),
-                          Text(matchProgress['strikerFours'].toString()),
-                          Text(matchProgress['strikerSixes'].toString()),
+                          Text(matchProgressMap['strikerRuns'].toString()),
+                          Text(matchProgressMap['strikerBalls'].toString()),
+                          Text(matchProgressMap['strikerFours'].toString()),
+                          Text(matchProgressMap['strikerSixes'].toString()),
                         ],
                       ),
                     ),
@@ -209,13 +263,13 @@ class _ScoringPageState extends State<ScoringPage>{
                             items: batters,
                             onSelected: (Map<String, dynamic> selectedPlayer) {
                               context.read<MatchProgressModel>().changeNonStriker(selectedPlayer['id']);
-                              print('Current nonStrikerId: ${matchProgress['currentNonStrikerId']}');
+                              print('Current nonStrikerId: ${matchProgressMap['currentNonStrikerId']}');
                             },
                           ),
-                          Text(matchProgress['nonStrikerRuns'].toString()),
-                          Text(matchProgress['nonStrikerBalls'].toString()),
-                          Text(matchProgress['nonStrikerFours'].toString()),
-                          Text(matchProgress['nonStrikerSixes'].toString()),
+                          Text(matchProgressMap['nonStrikerRuns'].toString()),
+                          Text(matchProgressMap['nonStrikerBalls'].toString()),
+                          Text(matchProgressMap['nonStrikerFours'].toString()),
+                          Text(matchProgressMap['nonStrikerSixes'].toString()),
                         ],
                       ),
                     ),
@@ -272,19 +326,19 @@ class _ScoringPageState extends State<ScoringPage>{
                               items: bowlers,
                               onSelected: (Map<String, dynamic> selectedPlayer) {
                                 context.read<MatchProgressModel>().changeBowler(selectedPlayer['id']);
-                                print('Current bowlerId: ${matchProgress['currentBowlerId']}');
+                                print('Current bowlerId: ${matchProgressMap['currentBowlerId']}');
                               },
                           ),
                           Text(
-                              matchProgress['bowlerWickets'].toString(),
+                              matchProgressMap['bowlerWickets'].toString(),
                               style: const TextStyle(color: Colors.lightGreenAccent)
                           ),
                           Text(
-                              matchProgress['bowlerRunsLost'].toString(),
+                              matchProgressMap['bowlerRunsLost'].toString(),
                               style: const TextStyle(color: Colors.lightGreenAccent)
                           ),
                           Text(
-                              matchProgress['bowlerBalls'].toString(),
+                              matchProgressMap['bowlerBalls'].toString(),
                               style: const TextStyle(color: Colors.lightGreenAccent)
                           ),
                         ],
@@ -381,7 +435,7 @@ class _ScoringPageState extends State<ScoringPage>{
                       ),
                     ],
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.black,
                     thickness: 0.5,
                   ),
@@ -435,16 +489,22 @@ class _ScoringPageState extends State<ScoringPage>{
                       Expanded(
                         child: IconButton(
                           onPressed: (){
-                            _emptyValidation();
-                            _userAddBall.addBall(
-                                matchId,
-                                currentStriker['id'],
-                                currentNonStriker['id'],
-                                currentBowler['id'],
-                                buttonStates
-                            );
-                            _clearButtonStates();
-
+                            if (_emptyValidation()) {
+                              _userAddBall.addBall(
+                                  matchId,
+                                  currentStriker['id'],
+                                  currentNonStriker['id'],
+                                  currentBowler['id'],
+                                  buttonStates
+                              );
+                              _userAddBall.updateScoreBoard(buttonStates);
+                              _clearButtonStates();
+                              if(_userAddBall.isMatchEnded()){
+                                print('Match completed!');
+                                //pop up a dialog box
+                                _showDialog("You may check the result in Match History");
+                              };
+                            }
                           },
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(Colors.purpleAccent),
