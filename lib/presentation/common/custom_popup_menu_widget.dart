@@ -14,11 +14,13 @@ class CustomPopupMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filteredItems = items.where((item)=> item['status'] != 'dismissed').toList();
+
     return PopupMenuButton<Map<String, dynamic>>(
       initialValue: initialPlayer,
       onSelected: onSelected,
       itemBuilder: (BuildContext context) {
-        return items.map((item) {
+        return filteredItems.map((item) {
           return PopupMenuItem<Map<String, dynamic>>(
             value: item,
             child: Text(item['name']),
