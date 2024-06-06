@@ -27,14 +27,6 @@ class CustomSummaryTeamContainerWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Text(
-            "TEAMS INFO",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.lightGreenAccent,
-            ),
-          ),
           Text(
             "$battingTeamName vs $bowlingTeamName",
             style: const TextStyle(

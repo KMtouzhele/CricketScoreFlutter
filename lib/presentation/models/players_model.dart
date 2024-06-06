@@ -55,6 +55,12 @@ class PlayersModel extends ChangeNotifier {
     update();
   }
 
+  void removePlayer(String playerId){
+    batters.removeWhere((element) => element['id'] == playerId);
+    bowlers.removeWhere((element) => element['id'] == playerId);
+    update();
+  }
+
   void update() {
     notifyListeners();
   }

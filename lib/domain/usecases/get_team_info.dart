@@ -6,13 +6,18 @@ class GetTeamInfo extends ScoringRepository {
   GetTeamInfo(this._repository);
 
   @override
-  Future<List<Map<String, dynamic>>> getTeamInfo(String teamId) {
+  Future<List<Map<String, dynamic>>> getTeamPlayers(String teamId) {
     return _getTeamInfo(teamId);
   }
 
 
   Future<List<Map<String, dynamic>>> _getTeamInfo(String teamId) {
-    return _repository.getTeamInfo(teamId);
+    return _repository.getTeamPlayers(teamId);
+  }
+
+  @override
+  Future<String> getTeamName(String teamId) {
+    return _repository.getTeamName(teamId);
   }
 
 
