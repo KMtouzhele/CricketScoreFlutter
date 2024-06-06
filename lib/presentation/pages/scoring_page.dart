@@ -61,8 +61,8 @@ class _ScoringPageState extends State<ScoringPage>{
   }
 
   void _fetchTeamInfo(String battingTeamId, String bowlingTeamId) async {
-      final batters = await _getTeamInfo.getTeamInfo(battingTeamId);
-      final bowlers = await _getTeamInfo.getTeamInfo(bowlingTeamId);
+      final batters = await _getTeamInfo.getTeamPlayers(battingTeamId);
+      final bowlers = await _getTeamInfo.getTeamPlayers(bowlingTeamId);
       context.read<PlayersModel>().addBatters(batters);
       context.read<PlayersModel>().addBowlers(bowlers);
   }
@@ -115,11 +115,12 @@ class _ScoringPageState extends State<ScoringPage>{
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: const Duration(milliseconds: 500),
         content: Row(
           children: [
             const Icon(
               Icons.error,
-              color: Colors.lightGreenAccent,
+              color: Colors.purpleAccent,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
@@ -134,6 +135,7 @@ class _ScoringPageState extends State<ScoringPage>{
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: const Duration(milliseconds: 500),
         content: Row(
           children: [
             const Icon(

@@ -1,4 +1,5 @@
 
 abstract class ScoringRepository {
-  Future<List<Map<String, dynamic>>> getTeamInfo(String teamId);
+  Future<List<Map<String, dynamic>>> getTeamPlayers(String teamId);
+  Future<String> getTeamName(String teamId);
 }

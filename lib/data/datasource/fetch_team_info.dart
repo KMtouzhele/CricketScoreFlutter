@@ -6,7 +6,7 @@ class FetchTeamInfo implements ScoringRepository {
   //TODO https://chatgpt.com/share/8c666eca-5f79-43ad-bc6b-c8b55cee4685
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   @override
-  Future<List<Map<String, dynamic>>> getTeamInfo(String teamId) async {
+  Future<List<Map<String, dynamic>>> getTeamPlayers(String teamId) async {
     try {
       QuerySnapshot querySnapshot = await _db.collection('players')
           .where('teamId', isEqualTo: teamId)
@@ -23,5 +23,16 @@ class FetchTeamInfo implements ScoringRepository {
       return [];
     }
   }
-  
+
+  @override
+  Future<String> getTeamName(String teamId) async {
+    try {
+      DocumentSnapshot doc = await _db.collection('teams').doc(teamId).get();
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return data['teamName'];
+    } catch (e) {
+      print('Failed to get team name: $e');
+      return "";
+    }
+  }
 }

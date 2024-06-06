@@ -58,7 +58,9 @@ class UserCreateMatch {
     Map<String, String> matchInfo = {
       'MatchId': matchId,
       'BattingTeamId': battingTeamId,
+      'BattingTeamName': battingTeamName,
       'BowlingTeamId': bowlingTeamId,
+      'BowlingTeamName': bowlingTeamName,
     };
     return matchInfo;
   }
