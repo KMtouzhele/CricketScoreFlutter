@@ -95,6 +95,7 @@ class MatchProgressModel extends ChangeNotifier {
     matchProgress["currentBall"] += isBallDelivered ? 1 : 0;
     if (matchProgress["currentBall"] == 6) {
       _bowlerDismissed();
+      _swap();
       matchProgress["currentOver"] += 1;
       matchProgress["currentBall"] = 0;
     }
@@ -106,6 +107,7 @@ class MatchProgressModel extends ChangeNotifier {
     if (runs % 2 == 1) {
       _swap();
     }
+
 
     update();
   }

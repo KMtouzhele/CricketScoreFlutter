@@ -70,6 +70,14 @@ class _MatchHistoryDetailPageState extends State<MatchHistoryDetailPage> {
     );
   }
 
+  int getMatchTotalRuns(List<Map<String, dynamic>> balls){
+    return _getMatchHistory.getMatchTotalRuns(balls);
+  }
+
+  int getMatchTotalWickets(List<Map<String, dynamic>> balls){
+    return _getMatchHistory.getMatchTotalWickets(balls);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +105,19 @@ class _MatchHistoryDetailPageState extends State<MatchHistoryDetailPage> {
           padding: const EdgeInsets.only(left: 16.0, right: 16.0),
           child: Column(
             children: [
+              Row(
+                children: [
+                  Text(
+                    "WICKETS: ${getMatchTotalWickets(matchDetailState)}",
+                    style: subtitleStyle,
+                  ),
+                  Spacer(),
+                  Text(
+                    "TOTAL RUNS: ${getMatchTotalRuns(matchDetailState)}",
+                    style: subtitleStyle,
+                  )
+                ],
+              ),
               Expanded(
                 child: ListView.builder(
                     itemBuilder: (

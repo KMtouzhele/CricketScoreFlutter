@@ -49,6 +49,31 @@ class GetMatchHistory {
     return ballList;
   }
 
+  int getMatchTotalRuns(List<Map<String, dynamic>> balls){
+    int totalRuns = 0;
+    for (var ball in balls) {
+      totalRuns += ball['runs']! as int;
+    }
+    return totalRuns;
+  }
+
+  int getMatchTotalWickets(List<Map<String, dynamic>> balls){
+    int totalWickets = 0;
+    for (var ball in balls) {
+      if (ball['ballType'] == 'bowled'
+          || ball['ballType'] == 'caught'
+          || ball['ballType'] == 'lbw'
+          || ball['ballType'] == 'runOut'
+          || ball['ballType'] == 'stumped'
+          || ball['ballType'] == 'hitWicket'
+          || ball['ballType'] == 'caughtBowled'
+      ) {
+        totalWickets += 1;
+      }
+    }
+    return totalWickets;
+  }
+
   Future<String> _getTeamName(String teamId) async {
     return await _scoringRepository.getTeamName(teamId);
   }
