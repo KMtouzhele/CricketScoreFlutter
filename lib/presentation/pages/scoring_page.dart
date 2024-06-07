@@ -105,7 +105,7 @@ class _ScoringPageState extends State<ScoringPage>{
       return false;
     }
     if (matchProgressMap['currentStrikerId'] == matchProgressMap['currentNonStrikerId']) {
-      _showErrorSnackBar("Striker and non-striker cannot be the same player!");
+      _showErrorSnackBar("Two batters cannot be the same player!");
       return false;
     } else {
       return true;
