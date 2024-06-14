@@ -37,7 +37,7 @@ class _ScoringPageState extends State<ScoringPage>{
     '5': false,
     '6': false,
     '7': false,
-    '8': false,
+    '0': false,
     '4S': false,
     '6S': false,
     'NB': false,
@@ -105,7 +105,7 @@ class _ScoringPageState extends State<ScoringPage>{
       return false;
     }
     if (matchProgressMap['currentStrikerId'] == matchProgressMap['currentNonStrikerId']) {
-      _showErrorSnackBar("Striker and non-striker cannot be the same player!");
+      _showErrorSnackBar("Two batters cannot be the same player!");
       return false;
     } else {
       return true;
@@ -268,7 +268,7 @@ class _ScoringPageState extends State<ScoringPage>{
                     child: IntrinsicHeight(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_cricket_rounded, color: Colors.purpleAccent,),
+                          const Icon(Icons.sports_cricket_rounded, color: Colors.purpleAccent,),
                           CustomPopupMenuButton(
                               initialPlayer: currentStriker,
                               items: batters,
@@ -289,7 +289,7 @@ class _ScoringPageState extends State<ScoringPage>{
                     child: IntrinsicHeight(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_cricket_outlined),
+                          const Icon(Icons.sports_cricket_outlined),
                           CustomPopupMenuButton(
                             initialPlayer: currentNonStriker,
                             items: batters,
@@ -352,7 +352,7 @@ class _ScoringPageState extends State<ScoringPage>{
                     child: IntrinsicHeight(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_baseball, color: Colors.lightGreenAccent,),
+                          const Icon(Icons.sports_baseball, color: Colors.lightGreenAccent,),
                           CustomPopupMenuButtonDark(
                               initialPlayer: currentBowler,
                               items: bowlers,
@@ -434,9 +434,9 @@ class _ScoringPageState extends State<ScoringPage>{
                       ),
                       marginSpaceSmallV,
                       CustomToggleTextButtonWidget(
-                        onPressed: () => toggleButtonState('8'),
-                        isSelected: buttonStates['8'] ?? false,
-                        text: "8",
+                        onPressed: () => toggleButtonState('0'),
+                        isSelected: buttonStates['0'] ?? false,
+                        text: "0",
                       ),
                     ],
                   ),

@@ -24,6 +24,7 @@ class MatchSetupData implements MatchRepository {
   @override
   Future<String> addTeam(Team team) async {
     try {
+      print('Trying to save a new team...');
       DocumentReference docRef = await _db.collection('teams').add(team.toJson());
       print('Team added successfully with id: ${docRef.id}');
       return docRef.id;

@@ -18,7 +18,7 @@ class CustomListObjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: IntrinsicHeight(
         child: Container(
           padding: const EdgeInsets.all(16),

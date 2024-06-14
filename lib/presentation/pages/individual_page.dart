@@ -22,6 +22,8 @@ class _IndividualPageState extends State<IndividualPage>{
   late final GetIndividualResults _getIndividualResults;
   List<Map<String, dynamic>> battersResult = [];
   List<Map<String, dynamic>> bowlersResult = [];
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,7 @@ class _IndividualPageState extends State<IndividualPage>{
     bowlersResult = await _getIndividualResults.getBowlerIndividual(matchId);
     setState(() {
       currentDisplay = battersResult;
+      isLoading = false;
     });
     print('CurrentDisplay: $currentDisplay');
   }
@@ -50,7 +53,25 @@ class _IndividualPageState extends State<IndividualPage>{
           padding: const EdgeInsets.only(left: 16.0, right: 16.0),
           child: Column(
             children: [
-              Row(
+              if(isLoading)
+                const Expanded(
+                  child: Column(
+                    children: [
+                      Spacer(),
+                      CircularProgressIndicator(
+                        color: Colors.lightGreenAccent,
+                      ),
+                      marginSpaceSmall,
+                      Text("Loading..."),
+                      Spacer(),
+                    ],
+                  ),
+                )
+              else if(battersResult.isEmpty || bowlersResult.isEmpty)
+                  const Text(
+                    "No players have played so far."
+                )
+              else Row(
                 children: [
                   ChoiceChip(
                     label: const Text("Batters"),
