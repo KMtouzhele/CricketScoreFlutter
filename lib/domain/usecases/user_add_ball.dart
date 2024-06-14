@@ -39,7 +39,7 @@ class UserAddBall {
           break;
           case '7': runs = 7;
           break;
-          case '8': runs = 8;
+          case '0': runs = 0;
           break;
           case '4S': runs = 4;
           ballType = BallType.fourBoundaries;

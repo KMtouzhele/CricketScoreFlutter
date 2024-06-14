@@ -16,55 +16,58 @@ class CustomBatterIndividualObjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.lightGreenAccent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            Spacer(),
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.lightGreenAccent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              const Spacer(),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            marginSpaceSmall,
-            Row(
-              children: [
-                Spacer(),
-                Column(
-                  children: [
-                    Text("RUNS"),
-                    Text(
-                      runs.toString(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  children: [
-                    Text("BALLS FACED"),
-                    Text(
-                      ballsFaced.toString(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-                Spacer(),
-              ],
-            ),
-          ],
+              marginSpaceSmall,
+              Row(
+                children: [
+                  const Spacer(),
+                  Column(
+                    children: [
+                      const Text("RUNS"),
+                      Text(
+                        runs.toString(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                  Column(
+                    children: [
+                      const Text("BALLS FACED"),
+                      Text(
+                        ballsFaced.toString(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
