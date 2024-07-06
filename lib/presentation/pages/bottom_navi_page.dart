@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import '../common/bottom_navigation.dart';
 
 class BottomNaviPage extends StatefulWidget {
-  BottomNaviPage({super.key});
+  const BottomNaviPage({super.key});
 
 
   @override
@@ -20,10 +20,10 @@ class _BottomNaviPageState extends State<BottomNaviPage> {
   int _currentTab = 0;
 
   final List<Widget> _subPages = [
-    ScoringPage(),
-    SummaryPage(),
-    IndividualPage(),
-    SettingsPage()
+    const ScoringPage(),
+    const SummaryPage(),
+    const IndividualPage(),
+    const SettingsPage()
   ];
 
 
