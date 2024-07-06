@@ -1,16 +1,6 @@
-# crossplatform
-
-CrickerScore with Flutter
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# About the Project
+This is a university project for the course of "Mobile Development" at the University of Tasmania.
+The project is a mobile application that allows users to record each ball outcome, check the statistics of the on-going match, check match history and share the results with friends.
+The application is built using the Flutter framework.
+# Design Pattern
+The project used Clean Architecture as the design pattern. The project is divided into three layers: Domain, Data, and Presentation.
